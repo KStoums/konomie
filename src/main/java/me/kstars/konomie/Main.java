@@ -1,27 +1,33 @@
 package me.kstars.konomie;
 
-import me.kstars.konomie.data.Data;
-import me.kstars.konomie.events.Events;
-import me.kstars.konomie.events.PlayerJoin;
-import me.kstars.konomie.events.PlayerQuit;
-import me.kstars.konomie.messages.Messages;
+import com.google.gson.Gson;
+import me.kstars.konomie.player.PlayerDataFileChecker;
+import me.kstars.konomie.player.PlayerDataStorage;
+import me.kstars.konomie.player.PlayerListenerRegister;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.util.logging.Level;
+
+import java.io.File;
 import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
-    Logger logger = Logger.getLogger("Konomie");
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private final Gson gson = new Gson();
 
     @Override
     public void onEnable() {
-        logger.log(Level.INFO, Messages.ENABLING_PLUGIN);
-        Events.registerEvents(this, new PlayerJoin(), new PlayerQuit());
+        logger.info("Konomie plugin enabling...");
+        File dataFile = new File("./plugins/Konomie/playerData.json");
 
-        Data.checkDataFile(logger);
+        PlayerDataFileChecker playerDataFileChecker = new PlayerDataFileChecker();
+        playerDataFileChecker.playerDataFileChecker(dataFile, this.gson);
+
+        PlayerDataStorage playerDataStorage = new PlayerDataStorage(dataFile, this.gson);
+        PlayerListenerRegister playerListenerRegister = new PlayerListenerRegister(this, playerDataStorage);
+        playerListenerRegister.registerListeners();
     }
 
     @Override
     public void onDisable() {
-        logger.log(Level.INFO, Messages.DISABLING_PLUGIN);
+        logger.info("Disabling Konimie plugin...");
     }
 }
