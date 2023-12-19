@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
-    Logger logger = Logger.getLogger("[Konomie]");
+    Logger logger = Logger.getLogger("Konomie");
 
     @Override
     public void onEnable() {
