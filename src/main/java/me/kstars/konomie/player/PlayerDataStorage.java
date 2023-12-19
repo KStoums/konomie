@@ -59,12 +59,11 @@ public class PlayerDataStorage {
 
     public void deletePlayer(UUID playerUuid) {
         try (FileReader fileReader = new FileReader(this.dataFile)) {
-            List<PlayerData> playersData = this.gson.fromJson(fileReader, PLAYER_LIST_TYPE);
-            List<PlayerData> newPlayersData = playersData.stream().filter(playerData -> playerData.getUuid().equals(playerUuid))
+            List<PlayerData> playersData = this.getPlayers().stream().filter(playerData -> playerData.getUuid().equals(playerUuid))
                     .collect(Collectors.toList());
 
             FileWriter fileWriter = new FileWriter(this.dataFile);
-            this.gson.toJson(newPlayersData, fileWriter);
+            this.gson.toJson(playersData, fileWriter);
         } catch (IOException e) {
             logger.severe(String.format("Error when delete player from playersData : %s", e.getMessage()));
         }
