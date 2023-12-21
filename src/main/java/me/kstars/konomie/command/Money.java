@@ -38,14 +38,14 @@ public class Money implements CommandExecutor {
 
         Optional<PlayerData> playerData = this.playerDataStorage.getPlayer(player.getUniqueId());
         if (playerData.isEmpty()) {
-            player.kick(Component.text(Color.RED + "Vous avez été exclu car vos données ne sont pas accessible"));
+            player.kick(Component.text(Color.RED + "You have been excluded because your data is not accessible"));
             return false;
         }
 
         player.playSound(player.getLocation(), Sound.ENTITY_PIG_HURT, 1.0f, 1.0f);
         player.sendMessage(Component.text(ChatColor.YELLOW + "===================================")
                 .appendNewline()
-                .append(Component.text(ChatColor.YELLOW + "Votre solde : " + ChatColor.AQUA + playerData.get().getPay()))
+                .append(Component.text(ChatColor.YELLOW + "Your balance : " + ChatColor.AQUA + playerData.get().getPay()))
                 .appendNewline()
                 .append(Component.text(ChatColor.YELLOW + "===================================")));
         return true;
