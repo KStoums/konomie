@@ -54,8 +54,12 @@ public class PlayerDataStorage {
 
     public void deletePlayer(UUID playerUuid) {
         try (FileReader fileReader = new FileReader(String.format(PLAYERS_DATA_ROOT_PATH, playerUuid))) {
-            PlayerData player = this.gson.fromJson(fileReader, PlayerData.class);
-            player.setPay(0);
+            Optional<PlayerData> player = this.getPlayer(playerUuid);
+            if (player.isEmpty()) {
+                return;
+            }
+
+            player.get().setPay(0);
 
             FileWriter fileWriter = new FileWriter(String.format(PLAYERS_DATA_ROOT_PATH, playerUuid));
             this.gson.toJson(player, fileWriter);
