@@ -1,71 +1,66 @@
 package me.kstars.konomie.player;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class PlayerDataStorage {
-    private static final Logger logger = Logger.getLogger(PlayerDataStorage.class.getName());
-    private static final Type PLAYER_LIST_TYPE = new TypeToken<List<PlayerData>>() {}.getType();
-
-    private final File dataFile;
+    private String PLAYERS_DATA_ROOT_PATH = "./plugins/Konomie/playersData/%s.json";
+    private final Logger logger = Logger.getLogger(PlayerDataStorage.class.getName());
+    private final PlayerDataFileChecker playerDataFileChecker;
     private final Gson gson;
 
 
-    public PlayerDataStorage(File dataFile, Gson gson) {
-        this.dataFile = dataFile;
+    public PlayerDataStorage(PlayerDataFileChecker playerDataFileChecker, Gson gson) {
+        this.playerDataFileChecker = playerDataFileChecker;
         this.gson = gson;
     }
 
-    public void addPlayer(UUID playerUuid, String playerName, double pay) throws IOException {
-        try (FileWriter fileWriter = new FileWriter(this.dataFile)) {
-            this.gson.toJson(this.getPlayers().add(new PlayerData(playerUuid, playerName, pay)), fileWriter);
+    public void addPlayer(UUID playerUuid, double pay) {
+        File playerDataFile = this.playerDataFileChecker.checkDataFile(String.format(PLAYERS_DATA_ROOT_PATH, playerUuid));
+        try (FileWriter fileWriter = new FileWriter(playerDataFile)) {
+            Optional<PlayerData> player = this.getPlayer(playerUuid);
+
+            if (player.isPresent()) {
+                return;
+            }
+
+            this.gson.toJson(new PlayerData(playerUuid, pay), fileWriter);
+        } catch (IOException e) {
+            logger.severe(String.format("Error when add player into playersData : %s", e.getMessage()));
         }
     }
 
     public Optional<PlayerData> getPlayer(UUID playerUuid) {
-        List<PlayerData> playersData = this.getPlayers();
+        File playerDatFile = new File(String.format(PLAYERS_DATA_ROOT_PATH, playerUuid));
+        if (!playerDatFile.exists()) {
+            return Optional.empty();
+        }
 
-         if (playersData != null) {
-                return playersData.stream().filter(playerData -> playerData.getUuid().equals(playerUuid))
-                        .findFirst();
-            }
-         return Optional.empty();
-    }
-
-    public List<PlayerData> getPlayers() {
-        try (FileReader fileReader = new FileReader(this.dataFile)) {
-            List<PlayerData> playersData = this.gson.fromJson(fileReader, PLAYER_LIST_TYPE);
-            if (playersData != null) {
-                return this.gson.fromJson(fileReader, PLAYER_LIST_TYPE);
-            }
-            return Collections.emptyList();
+        try (FileReader fileReader = new FileReader(String.format(PLAYERS_DATA_ROOT_PATH, playerUuid))) {
+            PlayerData playerData = this.gson.fromJson(fileReader, PlayerData.class);
+            return Optional.ofNullable(playerData);
         } catch (IOException e) {
-            logger.severe(String.format("Error when get players from playersData : %s", e.getMessage()));
-            return Collections.emptyList();
+            logger.severe(String.format("Error when get player into playersData : %s", e.getMessage()));
+            return Optional.empty();
         }
     }
 
     public void deletePlayer(UUID playerUuid) {
-        try (FileReader fileReader = new FileReader(this.dataFile)) {
-            List<PlayerData> playersData = this.getPlayers().stream().filter(playerData -> playerData.getUuid().equals(playerUuid))
-                    .collect(Collectors.toList());
+        try (FileReader fileReader = new FileReader(String.format(PLAYERS_DATA_ROOT_PATH, playerUuid))) {
+            PlayerData player = this.gson.fromJson(fileReader, PlayerData.class);
+            player.setPay(0);
 
-            FileWriter fileWriter = new FileWriter(this.dataFile);
-            this.gson.toJson(playersData, fileWriter);
+            FileWriter fileWriter = new FileWriter(String.format(PLAYERS_DATA_ROOT_PATH, playerUuid));
+            this.gson.toJson(player, fileWriter);
         } catch (IOException e) {
-            logger.severe(String.format("Error when delete player from playersData : %s", e.getMessage()));
+            logger.severe(String.format("Error when delete player : %s", e.getMessage()));
         }
     }
 }

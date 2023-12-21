@@ -1,24 +1,22 @@
 package me.kstars.konomie.player;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.UUID;
 
 public class PlayerData {
+    @SerializedName("playerUuid")
     private final UUID playerUuid;
-    private final String playerName;
+    @SerializedName("pay")
     private double pay;
 
-    public PlayerData(UUID playerUuid, String playerName, double pay) {
+    public PlayerData(UUID playerUuid, double pay) {
         this.playerUuid = playerUuid;
-        this.playerName = playerName;
         this.pay = pay;
     }
 
     public UUID getUuid() {
         return this.playerUuid;
-    }
-
-    public String getPlayerName() {
-        return this.playerName;
     }
 
     public double getPay() {

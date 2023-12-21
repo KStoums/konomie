@@ -1,5 +1,5 @@
 name: Konomie
 description: An economie plugin for Minecraft servers
 author: Kstars
-main: me.kstars.konomie.Main
+main: me.kstars.konomie.Konomie
 version: 0.1
