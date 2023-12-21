@@ -1,6 +1,8 @@
 package me.kstars.konomie;
 
 import com.google.gson.Gson;
+import me.kstars.konomie.command.CommandRegister;
+import me.kstars.konomie.command.Money;
 import me.kstars.konomie.player.PlayerDataFileChecker;
 import me.kstars.konomie.player.PlayerDataStorage;
 import me.kstars.konomie.player.PlayerListenerRegister;
@@ -20,6 +22,9 @@ public class Konomie extends JavaPlugin {
         PlayerDataStorage playerDataStorage = new PlayerDataStorage(playerDataFileChecker, this.gson);
         PlayerListenerRegister playerListenerRegister = new PlayerListenerRegister(this, playerDataStorage);
         playerListenerRegister.registerListeners();
+
+        CommandRegister commandRegister = new CommandRegister(this);
+        commandRegister.registerCommand(new Money(playerDataStorage));
     }
 
     @Override
