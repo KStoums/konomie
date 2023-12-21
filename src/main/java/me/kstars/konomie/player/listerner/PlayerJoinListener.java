@@ -1,5 +1,7 @@
-package me.kstars.konomie.player;
+package me.kstars.konomie.player.listerner;
 
+import me.kstars.konomie.player.PlayerData;
+import me.kstars.konomie.player.PlayerDataStorage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

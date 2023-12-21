@@ -1,4 +1,4 @@
-package me.kstars.konomie.player;
+package me.kstars.konomie.player.listerner;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

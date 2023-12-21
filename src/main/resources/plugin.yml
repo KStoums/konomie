@@ -1,10 +1,6 @@
 name: Konomie
 description: An economie plugin for Minecraft servers
 author: Kstars
-main: me.kstars.konomie.Konomie
-version: 0.2
-
-commands:
-  money:
-    description: View your cash balance
-    usage: /<command>
+main: me.kstars.konomie.KonomiePlugin
+version: 0.3
+api-version: 1.13

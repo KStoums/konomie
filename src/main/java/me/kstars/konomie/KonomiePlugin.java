@@ -2,16 +2,19 @@ package me.kstars.konomie;
 
 import com.google.gson.Gson;
 import me.kstars.konomie.command.CommandRegister;
-import me.kstars.konomie.command.Money;
+import me.kstars.konomie.command.KonomieCommand;
 import me.kstars.konomie.player.PlayerDataFileChecker;
 import me.kstars.konomie.player.PlayerDataStorage;
-import me.kstars.konomie.player.PlayerListenerRegister;
+import me.kstars.konomie.player.command.MoneyCommand;
+import me.kstars.konomie.player.listerner.PlayerListenerRegister;
+import org.apache.logging.log4j.util.Strings;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
-public class Konomie extends JavaPlugin {
-    private static final Logger logger = Logger.getLogger(Konomie.class.getName());
+public class KonomiePlugin extends JavaPlugin {
+    private static final Logger logger = Logger.getLogger(KonomiePlugin.class.getName());
     private final Gson gson = new Gson();
 
     @Override
@@ -24,7 +27,7 @@ public class Konomie extends JavaPlugin {
         playerListenerRegister.registerListeners();
 
         CommandRegister commandRegister = new CommandRegister(this);
-        commandRegister.registerCommand(new Money(playerDataStorage));
+        commandRegister.registerCommands(Arrays.asList(new MoneyCommand(playerDataStorage), new KonomieCommand(Strings.EMPTY)));
     }
 
     @Override
