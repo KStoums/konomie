@@ -23,14 +23,12 @@ public class Money implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
-        System.out.println("OK");
         if (!(sender instanceof Player)) {
             return false;
         }
 
         Player player = (Player) sender;
 
-        System.out.println(args);
         if (args.length != 0) {
             player.sendMessage(Component.text(Color.RED + "Syntax: /money"));
             return false;
@@ -45,7 +43,7 @@ public class Money implements CommandExecutor {
         player.playSound(player.getLocation(), Sound.ENTITY_PIG_HURT, 1.0f, 1.0f);
         player.sendMessage(Component.text(ChatColor.YELLOW + "===================================")
                 .appendNewline()
-                .append(Component.text(ChatColor.YELLOW + "Your balance : " + ChatColor.AQUA + playerData.get().getPay()))
+                .append(Component.text(ChatColor.YELLOW + "Your balance : " + ChatColor.AQUA + playerData.get().getPay() + "$"))
                 .appendNewline()
                 .append(Component.text(ChatColor.YELLOW + "===================================")));
         return true;
