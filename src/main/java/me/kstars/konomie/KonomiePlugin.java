@@ -23,11 +23,13 @@ public class KonomiePlugin extends JavaPlugin {
 
         PlayerDataFileChecker playerDataFileChecker = new PlayerDataFileChecker();
         PlayerDataStorage playerDataStorage = new PlayerDataStorage(playerDataFileChecker, this.gson);
-        PlayerListenerRegister playerListenerRegister = new PlayerListenerRegister(this, playerDataStorage);
-        playerListenerRegister.registerListeners();
 
         CommandRegister commandRegister = new CommandRegister(this);
-        commandRegister.registerCommands(Arrays.asList(new MoneyCommand(playerDataStorage), new KonomieCommand(Strings.EMPTY)));
+        KonomieCommand konomieCommand = new KonomieCommand(Strings.EMPTY);
+        commandRegister.registerCommands(Arrays.asList(new MoneyCommand(playerDataStorage), konomieCommand));
+
+        PlayerListenerRegister playerListenerRegister = new PlayerListenerRegister(this, playerDataStorage);
+        playerListenerRegister.registerListeners();
     }
 
     @Override

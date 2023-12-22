@@ -29,17 +29,19 @@ public class MoneyCommand extends Command {
         }
 
         if (args.length != 0) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
             player.sendMessage(Component.text("Syntax: /money", NamedTextColor.RED));
             return false;
         }
 
         Optional<PlayerData> playerData = this.playerDataStorage.getPlayer(player.getUniqueId());
         if (playerData.isEmpty()) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
             player.kick(Component.text("You have been excluded because your data is not accessible", NamedTextColor.RED));
             return false;
         }
 
-        player.playSound(player.getLocation(), Sound.ENTITY_PIG_HURT, 1.0f, 1.0f);
+        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1.0f, 1.0f);
         player.sendMessage(Component.text("===================================", NamedTextColor.YELLOW)
                 .appendNewline()
                 .append(Component.text("Your balance : ", NamedTextColor.YELLOW))

@@ -1,28 +1,25 @@
 package me.kstars.konomie.command;
 
+import me.kstars.konomie.menu.ManagementMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.apache.logging.log4j.util.Strings;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class KonomieCommand extends Command {
-    private static final Component INVENTORY_NAME = Component.text("Konomie", NamedTextColor.YELLOW);
+    public static final Component INVENTORY_NAME = Component.text("Konomie", NamedTextColor.YELLOW);
     private static final String PERMISSION = "konimie.konimie.use";
+    public final String BARRIER_ITEM_NAME = "Reset balance from player";
+    public final String SIGN_ITEM_NAME = "Add money to player";
 
     public KonomieCommand(@NotNull String name) {
-        super("konomie", "Open the player management menu", Strings.EMPTY, Collections.emptyList());
+        super("konomie", "Open the player management menu", "§cSyntax: /konomie <player>", Collections.emptyList());
     }
 
     @Override
@@ -32,38 +29,27 @@ public class KonomieCommand extends Command {
         }
 
         if (!player.hasPermission(PERMISSION)) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
             player.sendMessage(Component.text("Error: You don't have access to this command.", NamedTextColor.RED));
             return false;
         }
 
-        Inventory inventory = Bukkit.createInventory(null, 9, INVENTORY_NAME);
+        if (args.length != 1) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            player.sendMessage(Component.text("Syntax: /konomie <player>", NamedTextColor.RED));
+            return false;
+        }
 
-        ItemStack sign = this.createGuiItem(Material.OAK_SIGN,
-                Component.text("Add money to player", NamedTextColor.DARK_GREEN),
-                Collections.emptyList());
+        Player victim = Bukkit.getPlayer(args[0]);
+        if (!victim.isOnline()) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            player.sendMessage(Component.text(String.format("Error: %s is not online.", victim.getName()), NamedTextColor.RED));
+            return false;
+        }
 
-        ItemStack barrier = this.createGuiItem(Material.BARRIER,
-                Component.text("Reset balance from player", NamedTextColor.RED),
-                Collections.emptyList());
-
-        Inventory finalInventory = this.setItemsToInventory(inventory, Map.of(sign, 2, barrier, 6));
-        player.openInventory(finalInventory);
+        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1.0f, 1.0f);
+        ManagementMenu menu = new ManagementMenu();
+        player.openInventory(menu.getInventory());
         return true;
-    }
-
-    public ItemStack createGuiItem(Material material, Component itemName, List<Component> lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.displayName(itemName);
-        itemMeta.lore(lore);
-
-        item.setItemMeta(itemMeta);
-
-        return item;
-    }
-
-    public Inventory setItemsToInventory(Inventory inventory, Map<ItemStack, Integer> itemStackMap) {
-        itemStackMap.forEach((itemStack, integer) -> inventory.setItem(integer, itemStack));
-        return inventory;
     }
 }

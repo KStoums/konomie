@@ -17,7 +17,8 @@ public class PlayerListenerRegister {
     public void registerListeners() {
         Arrays.asList(
                 new PlayerJoinListener(this.playerDataStorage),
-                new PlayerQuitListener()
+                new PlayerQuitListener(),
+                new PlayerInteractListener()
         ).forEach(listener -> plugin.getServer().getPluginManager().registerEvents(listener, plugin));
     }
 }
